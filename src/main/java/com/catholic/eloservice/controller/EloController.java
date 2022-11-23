@@ -32,12 +32,21 @@ public class EloController {
     @Autowired
     EloFormatter eloFormatter;
     
-    @GetMapping("/elo/{eloFirstPlayer}/{eloSecondPlayer}/{whoWon}")
+    @GetMapping("/elo/{eloFirstPlayer}/{eloSecondPlayer}/{nGamesFirstPlayer}/{nGamesSecondPlayer}/{whoWon}")
     public EloResult getElo(@PathVariable("eloFirstPlayer") double eloFirstPlayer,
                             @PathVariable("eloSecondPlayer") double eloSecondPlayer,
+                            @PathVariable("nGamesFirstPlayer") int nGamesFirstPlayer,
+                            @PathVariable("nGamesSecondPlayer") int nGamesSecondPlayer,
                             @PathVariable("whoWon") int whoWon){
                 
-                ArrayList<String> eloCalculated = eloCalculator.getfinalElo(32, eloFirstPlayer, eloSecondPlayer, whoWon, "###");
+                ArrayList<String> eloCalculated = eloCalculator.getfinalElo(
+                                    32, 
+                                    eloFirstPlayer, 
+                                    eloSecondPlayer,
+                                    nGamesFirstPlayer,
+                                    nGamesSecondPlayer, 
+                                    whoWon, 
+                                    "###");
                 
                 player1.setOldElo(eloFormatter.format(eloFirstPlayer));
                 player1.setNewElo(eloCalculated.get(0));

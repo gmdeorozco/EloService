@@ -16,37 +16,43 @@ public class EloCalculator {
     @Autowired
     EloFormatter eloFormatter;
     
-    public ArrayList<String> getfinalElo(int K, double eloFirstPlayer, double eloSecondPlayer, int whoWon , String decimalFormat){       
+    public ArrayList<String> getfinalElo(int K, double eloFirstPlayer, double eloSecondPlayer,
+             int numberOfGamesFirstPlayer, int numberOfGamesSecondPlayer,
+             int whoWon , String decimalFormat){       
+
         ArrayList<String>result =   new ArrayList<>();
-
         double transformedFirst = Math.pow(10, (eloFirstPlayer/400));
-
         double transformedSecond = Math.pow(10, (eloSecondPlayer/400));
-
         double expectedScoreFirst = transformedFirst/(transformedFirst+transformedSecond);
-     
-
         double expectedSecoreSecond = transformedSecond/(transformedFirst+transformedSecond);
    
-       
+       boolean shouldChangeFirst = numberOfGamesSecondPlayer > 10 ? true : false;
+       boolean shouldChangeSecond = numberOfGamesFirstPlayer > 10 ? true : false;
+
+       double newEloFirst = eloFirstPlayer;
+       double newEloSecond = eloSecondPlayer;
 
         switch(whoWon){
             case 0 :  {
-                result.add( eloFormatter.format(eloFirstPlayer + K * (0.5 - expectedScoreFirst)));
-                result.add( eloFormatter.format(eloSecondPlayer + K * (0.5 - expectedSecoreSecond)));
+                newEloFirst = shouldChangeFirst ? eloFirstPlayer + K * (0.5 - expectedScoreFirst) : eloFirstPlayer;
+                newEloSecond = shouldChangeSecond ? eloSecondPlayer + K * (0.5 - expectedSecoreSecond) : eloSecondPlayer;
             }   break;
 
             case 1:{
-                result.add(eloFormatter.format( eloFirstPlayer + K * (1 - expectedScoreFirst)));
-                result.add( eloFormatter.format(eloSecondPlayer + K * (0 - expectedSecoreSecond)));
+                newEloFirst = shouldChangeFirst ? eloFirstPlayer + K * (1 - expectedScoreFirst) : eloFirstPlayer;
+                newEloSecond = shouldChangeSecond ? eloSecondPlayer + K * (0 - expectedSecoreSecond) : eloSecondPlayer;
             } break;
 
-            case 2:{
-                result.add( eloFormatter.format(eloFirstPlayer + K * (0 - expectedScoreFirst)));
-                result.add( eloFormatter.format(eloSecondPlayer + K * (1 - expectedSecoreSecond)));
+            case 2: {
+                newEloFirst = shouldChangeFirst ? eloFirstPlayer + K * (0 - expectedScoreFirst) : eloFirstPlayer;
+                newEloSecond = shouldChangeSecond ? eloSecondPlayer + K * (1 - expectedSecoreSecond) : eloSecondPlayer;
             }
+
+            
         }
 
+        result.add( eloFormatter.format( newEloFirst ));
+        result.add( eloFormatter.format( newEloSecond ));
 
         return result;
 
